@@ -1,0 +1,55 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Global settings
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Kubernetes namespace where all resources are deployed.
+namespace: network-lab
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Pod images
+# Override any image independently per tier.
+# ─────────────────────────────────────────────────────────────────────────────
+images:
+  frontend: nginx
+  backend:  nginx
+  database: nginx
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NetworkPolicy toggles
+# Set any flag to false to skip creating that specific policy.
+# ─────────────────────────────────────────────────────────────────────────────
+networkPolicies:
+  # Block ALL ingress and egress for every pod in the namespace (baseline).
+  defaultDenyAll: true
+
+  # Block only ingress (lighter alternative – disabled by default).
+  defaultDenyIngressOnly: false
+
+  # Allow traffic from frontend pods INTO backend pods (ingress on backend).
+  allowFrontendToBackend: true
+
+  # Allow backend pods to send traffic OUT to database pods (egress from backend).
+  allowBackendEgressToDb: true
+
+  # Allow database pods to RECEIVE traffic from backend pods (ingress on database).
+  allowBackendToDb: true
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Port configuration
+# Ports used in NetworkPolicy rules.
+# Leave empty ([]) to allow all ports for a given flow.
+# ─────────────────────────────────────────────────────────────────────────────
+ports:
+  # Ports on which backend listens (frontend → backend traffic).
+  backend: []
+  # Example with a specific port:
+  # backend:
+  #   - protocol: TCP
+  #     port: 8080
+
+  # Ports on which database listens (backend → database traffic).
+  database: []
+  # Example:
+  # database:
+  #   - protocol: TCP
+  #     port: 5432
