@@ -1,0 +1,7 @@
+{{/* namespace.yaml — creates the target namespace */}}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "chart.namespace" . }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
