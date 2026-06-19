@@ -1,0 +1,20 @@
+{{/*
+  default-deny.yaml
+  Controlled by: .Values.networkPolicies.defaultDenyAll (bool)
+  Blocks ALL ingress AND egress for every pod in the namespace.
+  This is the strictest baseline — enable first, then carve out exceptions.
+*/}}
+{{- if .Values.networkPolicies.defaultDenyAll }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: {{ include "chart.namespace" . }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  podSelector: {}        # selects every pod in the namespace
+  policyTypes:
+  - Ingress
+  - Egress
+{{- end }}
