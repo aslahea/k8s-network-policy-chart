@@ -1,0 +1,38 @@
+{{/*
+  allow-backend-to-db.yaml
+  Controlled by: .Values.networkPolicies.allowBackendToDb (bool)
+  Allows the database pod to RECEIVE ingress traffic from backend pods.
+  Policy type: Ingress (applied ON the database pod).
+
+  NOTE: This works together with allow-backend-egress-db.yaml.
+        Both must be enabled for full backend ↔ database communication:
+          - allow-backend-egress-db  → permits egress FROM backend
+          - allow-backend-to-db      → permits ingress INTO database
+*/}}
+{{- if .Values.networkPolicies.allowBackendToDb }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-to-db
+  namespace: {{ include "chart.namespace" . }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: database
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: backend
+  {{- if .Values.ports.database }}
+    ports:
+    {{- range .Values.ports.database }}
+    - protocol: {{ .protocol | default "TCP" }}
+      port: {{ .port }}
+    {{- end }}
+  {{- end }}
+{{- end }}

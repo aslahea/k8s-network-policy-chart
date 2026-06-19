@@ -1,0 +1,33 @@
+{{/*
+  allow-frontend-backend.yaml
+  Controlled by: .Values.networkPolicies.allowFrontendToBackend (bool)
+  Allows pods with label app=frontend to send traffic INTO pods with label app=backend.
+  Policy type: Ingress (applied ON the backend pod).
+*/}}
+{{- if .Values.networkPolicies.allowFrontendToBackend }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: {{ include "chart.namespace" . }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+  {{- if .Values.ports.backend }}
+    ports:
+    {{- range .Values.ports.backend }}
+    - protocol: {{ .protocol | default "TCP" }}
+      port: {{ .port }}
+    {{- end }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,33 @@
+{{/*
+  allow-backend-egress-db.yaml
+  Controlled by: .Values.networkPolicies.allowBackendEgressToDb (bool)
+  Allows pods with label app=backend to send traffic OUT to pods with label app=database.
+  Policy type: Egress (applied ON the backend pod).
+*/}}
+{{- if .Values.networkPolicies.allowBackendEgressToDb }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-egress-db
+  namespace: {{ include "chart.namespace" . }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: database
+  {{- if .Values.ports.database }}
+    ports:
+    {{- range .Values.ports.database }}
+    - protocol: {{ .protocol | default "TCP" }}
+      port: {{ .port }}
+    {{- end }}
+  {{- end }}
+{{- end }}
