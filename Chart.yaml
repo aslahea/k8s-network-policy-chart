@@ -1,0 +1,19 @@
+apiVersion: v2
+name: network-policy-chart
+description: >
+  A reusable Helm chart that deploys a 3-tier application (frontend / backend / database)
+  with opinionated Kubernetes NetworkPolicies:
+    - Default-deny all ingress & egress
+    - Allow frontend → backend ingress
+    - Allow backend → database egress
+    - Allow database to accept ingress from backend
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - kubernetes
+  - network-policy
+  - security
+  - zero-trust
+maintainers:
+  - name: your-name
+    email: you@example.com
