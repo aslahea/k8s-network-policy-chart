@@ -1,0 +1,20 @@
+{{/*
+  default-deny-ingress.yaml
+  Controlled by: .Values.networkPolicies.defaultDenyIngressOnly (bool)
+  Blocks only ingress — egress is left unrestricted.
+  Lighter alternative to defaultDenyAll.
+  NOTE: do NOT enable both defaultDenyAll and defaultDenyIngressOnly at the same time.
+*/}}
+{{- if .Values.networkPolicies.defaultDenyIngressOnly }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: {{ include "chart.namespace" . }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+{{- end }}
