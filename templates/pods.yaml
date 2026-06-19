@@ -1,0 +1,43 @@
+{{/* pods.yaml — deploys the three application pods */}}
+
+{{/* ── Frontend Pod ───────────────────────────────────────────────────── */}}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontend
+  namespace: {{ include "chart.namespace" . }}
+  labels:
+    app: frontend
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  containers:
+  - name: frontend
+    image: {{ .Values.images.frontend }}
+---
+{{/* ── Backend Pod ─────────────────────────────────────────────────────── */}}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: backend
+  namespace: {{ include "chart.namespace" . }}
+  labels:
+    app: backend
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  containers:
+  - name: backend
+    image: {{ .Values.images.backend }}
+---
+{{/* ── Database Pod ────────────────────────────────────────────────────── */}}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: database
+  namespace: {{ include "chart.namespace" . }}
+  labels:
+    app: database
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  containers:
+  - name: database
+    image: {{ .Values.images.database }}
